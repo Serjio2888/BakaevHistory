@@ -1,2 +1,2 @@
 # BakaevHistory
-TextHistory Homework python courses technopark made by Bakaev Sergey
+TextHistory Homework made by Bakaev Sergey
