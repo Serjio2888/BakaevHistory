@@ -59,20 +59,22 @@ class TextHistory:
         self._list.append(action)
         return self._version
 
-    def helpIns(self, buff=[], i = 0):
+    def help_ins(self, i = 0):
+        buff = []
         for obj in self._list:
             if i>0:
-                if type(obj)==type(buff[i-1])==InsertAction:
+                if isinstance(obj, InsertAction) and isinstance(buff[i-1], InsertAction):
                     if obj.pos == 0 and buff[i-1].pos == 0:
                         (self._list[i]).text=(self._list[i]).text + (self._list[i-1]).text
                         self._list[i-1]=None
             i+=1
             buff.append(obj)
 
-    def helpDel(self, buff=[], i=0):
+    def help_del(self, i=0):
+        buff = []
         for obj in self._list:
             if i>0:
-                if type(obj)==type(buff[i-1])==DeleteAction:
+                if isinstance(obj, DeleteAction) and isinstance(buff[i-1], DeleteAction):
                     if obj.pos == 0 and buff[i-1].pos == 0:
                         (self._list[i]).length=(self._list[i-1]).length+(self._list[i]).length
                         self._list[i-1]=None
@@ -84,12 +86,13 @@ class TextHistory:
             to_version = self._version
         if from_version < 0 or to_version > self._version or from_version > to_version:
             raise ValueError()
-        self.helpIns()
-        self.helpDel()
+        self.help_ins()
+        self.help_del()
         output = self._list[from_version:to_version]
         for i in range(output.count(None)):
             output.remove(None)
         return output
+
     
 class Action:
     def __init__(self, pos=None, length=None, text='', from_version=None, to_version=None):
@@ -104,24 +107,31 @@ class Action:
     @property
     def text(self):
         return self._text
+    
     @text.setter
     def text(self, value):
         self._text = value
+        
     @property
     def from_version(self):
         return self._from_version
+    
     @property
     def to_version(self):
         return self._to_version
+    
     @property
     def pos(self):
         return self._pos
+    
     @property
     def length(self):
         return self._length
+    
     @length.setter
     def length(self, value):
         self._length = value
+
     
 class InsertAction(Action):
     def apply(self, text):
@@ -134,3 +144,4 @@ class DeleteAction(Action):
 class ReplaceAction(Action):
     def apply(self, text):
         return text[:self._pos]+self._text+text[self._pos+len(self._text):]
+
